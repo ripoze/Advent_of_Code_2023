@@ -28,27 +28,19 @@ const maxBlues = 14
 const maxGreens = 13
 
 let part1 = data.filter(game => {
-    let possible = true
-    game.shows.map(show => {
-        if (show.red > maxReds || show.blue > maxBlues || show.green > maxGreens) possible = false
-    })
-    return possible
+    return game.shows.every(show => show.red <= maxReds && show.blue <= maxBlues && show.green <= maxGreens)
 }).reduce((acc, game) => acc += game.id, 0)
 console.log(`Part 1: ${part1}`); //1734
 
 //Part 2
-data = data.map(game => {
-    let reds = 0
-    let blues = 0
-    let greens = 0
-    game.shows.map(show => {
-        reds = Math.max(show.red, reds)
-        blues = Math.max(show.blue, blues)
-        greens = Math.max(show.green, greens)
-    })
-    game.maximums = { 'red': reds, 'green': greens, 'blue': blues }
-    game.power = reds * greens * blues
-    return game
-})
-let part2 = data.reduce((acc, game) => acc += game.power, 0)
+let part2 = data.map(game => {
+    return game.shows.reduce((acc, show) => {
+        acc.red = Math.max(show.red, acc.red)
+        acc.blue = Math.max(show.blue, acc.blue)
+        acc.green = Math.max(show.green, acc.green)
+        acc.power = acc.red * acc.blue * acc.green
+        return acc
+    }, { 'red': 0, 'green': 0, 'blue': 0 })
+}).reduce((acc, game) => acc += game.power, 0)
+
 console.log(`Part 2: ${part2}`); //70387
